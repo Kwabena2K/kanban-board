@@ -13,7 +13,7 @@ function AuthProvider({children}) {
         const fetchUser = async () => {
             setLoading(true)
             
-            const { data: { user } } = await supabase.auth.getUser()
+            const { data: { user }, error } = await supabase.auth.getUser()
             setUser(user)
             setLoading(false)
             console.log("User from API:", user)
