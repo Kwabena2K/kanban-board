@@ -1,17 +1,21 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Boards from './pages/Boards'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={
-          <div className="p-8">
-            <h1 className="text-3xl font-bold">Home Page</h1>
-            <a href="/login" className="text-blue-600">Go to Login</a>
-          </div>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/boards" element={
+          <ProtectedRoute>
+            <Boards/>
+          </ProtectedRoute>
         } />
+          <Route path="/" element={<Navigate to="/boards" />} />
       </Routes>
     </BrowserRouter>
   )
