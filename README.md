@@ -1,16 +1,90 @@
-# React + Vite
+# Kanban Board Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack Kanban-style task management application built to demonstrate modern frontend development practices, authentication workflows, and scalable component architecture.
 
-Currently, two official plugins are available:
+This project focuses on building production-style patterns using React, client-side state management, and backend persistence.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The Kanban Board app allows users to manage tasks across multiple workflow stages using an intuitive drag-and-drop interface. Authenticated users can create and organize tasks while maintaining persistent data storage.
 
-## Expanding the ESLint configuration
+This project was built as part of strengthening full-stack engineering skills and preparing for production-level frontend roles.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Skills demonstrated
+
+- React component architecture and state management
+- Authentication flows and protected routes
+- REST-style data interaction with a backend service
+- Drag-and-drop UI implementation
+- Persistent storage and data modeling
+- Modern project structure and scalability patterns
+
+---
+
+## Tech Stack
+
+**Frontend**
+- React
+- JavaScript (ES6+)
+- React Router
+- TailwindCSS
+
+**Backend / Data**
+- Supabase (Authentication + PostgreSQL)
+
+**Tooling**
+- Vite
+- Git / GitHub
+
+---
+
+## Core Features
+
+- User authentication (signup/login/logout)
+- Protected routes for authenticated users
+- Create, update, and delete tasks
+- Drag-and-drop task movement between columns
+- Persistent database storage
+- Responsive layout
+
+---
+
+## Backend Highlights
+
+- Context-based authentication layer for global session management
+- Reusable component structure for board, columns, and task cards
+- Separation of API logic from UI components
+- Route protection pattern for secure navigation
+- Environment variable configuration for secure API usage
+
+---
+
+## Technical Challenges Solved
+
+**Protected routing**
+- Built a reusable route wrapper to enforce authentication.
+
+---
+
+## Accomplishments
+
+- Building a production-style React project
+- Designing scalable component patterns
+- Handling async data flows+
+- Structuring a frontend project for real-world team environments
+
+---
+
+## Running Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/kanban-board.git
+cd kanban-board
+npm install
+npm run dev
