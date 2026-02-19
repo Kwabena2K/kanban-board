@@ -10,16 +10,27 @@ function AuthProvider({children}) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        // Initial check if someone is already logged in
         const fetchUser = async () => {
             setLoading(true)
             
-            const { data: { user }, error } = await supabase.auth.getUser()
+            const { data: { user } } = await supabase.auth.getUser()
             setUser(user)
             setLoading(false)
             console.log("User from API:", user)
         }
         fetchUser()
-        
+
+
+        // Listener to watch for login/logout events and update state when auth changes
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth event:', event)
+            setUser(session?.user ?? null)
+        }
+    )
+
+    return () => subscription.unsubscribe()
     }, [])
 
 

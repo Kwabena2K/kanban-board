@@ -15,9 +15,9 @@ function Login() {
     const navigate = useNavigate();
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const handleSubmit = async () => {
         setError("")
+        console.log("Login clicked")
 
         if (!email || !password){
             setError("Please fill in both fields to continue!")
@@ -29,6 +29,7 @@ function Login() {
 
         try {
             await signIn(email,password)
+            console.log("Logged in")
             navigate("/boards") // navigate to the boards page if successful
         } catch (error) {
             setError(error.message)
@@ -63,7 +64,7 @@ function Login() {
                             setPassword(e.target.value)
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                    <button type="submit" disabled={loading} className="px-12 py-4 mb-2 bg-green-800 text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-green-900 transition-all duration-200">{loading ? 'Logging in...' : 'Login'}</button>
+                    <button type="button" disabled={loading} className="px-12 py-4 mb-2 bg-green-800 text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-green-900 transition-all duration-200" onClick={handleSubmit}>{loading ? 'Logging in...' : 'Login'}</button>
                     <p className="text-center text-sm text-gray-600 mt-2">
                         Don't have an account?{' '}
                         <Link to="/signup" className="text-blue-600 hover:underline">
