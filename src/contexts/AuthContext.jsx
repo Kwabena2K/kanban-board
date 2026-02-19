@@ -30,6 +30,7 @@ function AuthProvider({children}) {
         }
     )
 
+    // memory cleanup
     return () => subscription.unsubscribe()
     }, [])
 
