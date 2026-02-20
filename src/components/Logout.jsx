@@ -31,7 +31,7 @@ function Logout() {
     }
 
     return (
-        <button type="button" disabled={loading} className="px-12 py-4 mb-2 bg-green-800 text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-green-900 transition-all duration-200" onClick={handleLogout}>{loading ? 'Logging out...' : 'Logout'}</button>
+        <button type="button" disabled={loading} className="px-6 py-2 bg-red-700 text-white rounded-md hover:bg-red-800" onClick={handleLogout}>{loading ? 'Logging out...' : 'Logout'}</button>
     )
 
 }
