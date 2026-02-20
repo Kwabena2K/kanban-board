@@ -28,7 +28,7 @@ function Boards() {
 
             if (error) throw error
             setBoards(data || [])
-        } catch (error) {
+        } catch (error) { // error handling
             console.log('Error fetching board:', error)
         } finally {
             setLoading(false)
@@ -39,19 +39,21 @@ function Boards() {
     const createBoard = async (e) => {
         e.preventDefault()
 
-        if (!newBoardTitle.trim()) {
+        // Check if board has been created
+        if (!newBoardTitle.trim()) { // remove whitespace
             alert('Please enter a title')
             return
         }
 
         try {
-            const { data, error } = await supabase.from('boards').insert({ title: newBoardTitle, user_id: user.id }).select()
+            // insert into supabase
+            const { data, error } = await supabase.from('boards').insert({ title: newBoardTitle, user_id: user.id }).select() // return created board
 
             if (error) throw error
 
-            setNewBoardTitle('')
+            setNewBoardTitle('') // clear the input
             fetchBoard() // refresh list
-        } catch (error) {
+        } catch (error) { // error handling
             console.log('Error creating board:', error)
             alert(error.message)
         }
@@ -67,7 +69,7 @@ function Boards() {
             if (error) throw error
             fetchBoard() // Refresh list
 
-        } catch (error) {
+        } catch (error) { // error handling
             console.log('Error deleting board:', error)
             alert(error.message)
         }
@@ -82,7 +84,7 @@ function Boards() {
                 <div className="container mx-auto px-4 py-8">
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold">My Boards</h1>
-                        <button onClick={signOut} className="px-6 py-2 bg-red-700 text-white rounded-md hover:bg-red-800">Logout</button>
+                        <Logout />
                     </div>
                 </div>
                 
