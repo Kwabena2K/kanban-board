@@ -2,6 +2,7 @@ import Logout from "../components/Logout"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../contexts/AuthContext"
 import { useEffect, useState } from "react"
+import { Link } from 'react-router-dom'
 
 
 
@@ -87,34 +88,56 @@ function Boards() {
                         <Logout />
                     </div>
                 </div>
-                
+
 
 
                 <div className="container mx-auto px-4 py-8">
-                    <form onSubmit={createBoard} className="mb-8">
+                    <form onSubmit={createBoard} className="mb-8 ">
                         <div className="flex gap-2">
-                            Title: <input type="text" onChange={(e) => setNewBoardTitle(e.target.value)} value={newBoardTitle} className="flex-1 px-4 py-2 border rounded-lg" placeholder="New board title" />
-                        <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" type="submit">Create Board</button>
+                            <input type="text" onChange={(e) => setNewBoardTitle(e.target.value)} value={newBoardTitle} className="flex-1 px-4 py-2 border rounded-lg" placeholder="New board title" />
+                            <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" type="submit">Create Board</button>
                         </div>
-                        
+
                     </form>
                 </div>
 
 
                 {loading ? (
-                    <p>Loading...</p>
+                    <p className="text-center text-gray-600">Loading...</p>
                 ) : boards.length === 0 ? (
-                    <p>No boards available yet. Create one!</p>
+                    <p className="text-center text-gray-600">No boards available yet. Create one!</p>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {boards.map((board) => (
-                            <div key={board.id} className="inline-flex items-center gap-2">
-                                <h3>{board.title}</h3>
-                                <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"  onClick={() => deleteBoard(board.id)}>Delete</button>
-                            </div>
-                        ))}
-                        {/* <Logout /> */}
-                    </div>
+                    <table className="w-full bg-white rounded-lg shadow">
+                        <thead>
+                            <tr className="border-b">
+                                <th className="text-left px-12 py-3 text-gray-600">Title</th>
+                                <th className="text-left px-12 py-3 text-gray-600">Created</th>
+                                <th className="text-left px-12 py-3 text-gray-600">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {boards.map((board) => (
+                                <tr key={board.id} className="border-b hover:bg-gray-50 transition">
+                                    <td className="px-12 py-4">
+                                        <Link to={`/boards/${board.id}`} className="text-blue-600 hover:underline font-semibold">
+                                            {board.title}
+                                        </Link>
+                                    </td>
+                                    <td className="px-12 py-4 text-sm text-gray-500">
+                                        {new Date(board.created_at).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-12 py-4">
+                                        <button
+                                            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                                            onClick={() => deleteBoard(board.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </div>
         </div>
