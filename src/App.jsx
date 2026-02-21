@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Boards from './pages/Boards'
 import ProtectedRoute from './components/ProtectedRoute'
+import BoardDetail from './pages/BoardDetail'
 
 function App() {
   return (
@@ -13,6 +14,11 @@ function App() {
         <Route path="/boards" element={
           <ProtectedRoute>
             <Boards/>
+          </ProtectedRoute>
+        } />
+        <Route path="/boards/:id" element={
+          <ProtectedRoute>
+            <BoardDetail/>
           </ProtectedRoute>
         } />
           <Route path="/" element={<Navigate to="/boards" />} />
