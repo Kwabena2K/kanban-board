@@ -47,7 +47,6 @@ This project was built as part of strengthening full-stack engineering skills an
 - User authentication (signup/login/logout)
 - Protected routes for authenticated users
 - Create, update, and delete tasks
-- Drag-and-drop task movement between columns
 - Persistent database storage
 - Responsive layout
 
