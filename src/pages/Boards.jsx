@@ -80,68 +80,75 @@ function Boards() {
 
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="bg-white shadow">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold">My Boards</h1>
-                        <Logout />
-                    </div>
-                </div>
-
-
-
-                <div className="container mx-auto px-4 py-8">
-                    <form onSubmit={createBoard} className="mb-8 ">
-                        <div className="flex gap-2">
-                            <input type="text" onChange={(e) => setNewBoardTitle(e.target.value)} value={newBoardTitle} className="flex-1 px-4 py-2 border rounded-lg" placeholder="New board title" />
-                            <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" type="submit">Create Board</button>
-                        </div>
-
-                    </form>
-                </div>
-
-
-                {loading ? (
-                    <p className="text-center text-gray-600">Loading...</p>
-                ) : boards.length === 0 ? (
-                    <p className="text-center text-gray-600">No boards available yet. Create one!</p>
-                ) : (
-                    <table className="w-full bg-white rounded-lg shadow">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="text-left px-12 py-3 text-gray-600">Title</th>
-                                <th className="text-left px-12 py-3 text-gray-600">Created</th>
-                                <th className="text-left px-12 py-3 text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {boards.map((board) => (
-                                <tr key={board.id} className="border-b hover:bg-gray-50 transition">
-                                    <td className="px-12 py-4">
-                                        <Link to={`/boards/${board.id}`} className="text-blue-600 hover:underline font-semibold">
-                                            {board.title}
-                                        </Link>
-                                    </td>
-                                    <td className="px-12 py-4 text-sm text-gray-500">
-                                        {new Date(board.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-12 py-4">
-                                        <button
-                                            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                                            onClick={() => deleteBoard(board.id)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+    <div className="min-h-screen bg-slate-800">
+        {/* Navbar */}
+        <div className="bg-slate-900 border-b border-slate-700 shadow-lg">
+            <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-white tracking-tight">My Boards</h1>
+                <Logout />
             </div>
         </div>
-    )
+
+        {/* Create board form */}
+        <div className="container mx-auto px-6 py-6">
+            <form onSubmit={createBoard}>
+                <div className="flex gap-3 max-w-lg">
+                    <input
+                        type="text"
+                        onChange={(e) => setNewBoardTitle(e.target.value)}
+                        value={newBoardTitle}
+                        className="flex-1 px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="New board title"
+                    />
+                    <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 font-medium transition" type="submit">
+                        Create Board
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {/* Table */}
+        <div className="container mx-auto px-6">
+            {loading ? (
+                <p className="text-center text-slate-400">Loading...</p>
+            ) : boards.length === 0 ? (
+                <p className="text-center text-slate-400">No boards available yet. Create one!</p>
+            ) : (
+                <table className="w-full bg-slate-900 rounded-xl shadow-xl border border-slate-700">
+                    <thead>
+                        <tr className="border-b border-slate-700">
+                            <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Title</th>
+                            <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Created</th>
+                            <th className="text-left px-6 py-3 text-slate-400 text-sm font-medium">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {boards.map((board) => (
+                            <tr key={board.id} className="border-b border-slate-700 hover:bg-slate-800 transition">
+                                <td className="px-6 py-4">
+                                    <Link to={`/boards/${board.id}`} className="text-blue-400 hover:text-blue-300 font-semibold">
+                                        {board.title}
+                                    </Link>
+                                </td>
+                                <td className="px-6 py-4 text-sm text-slate-400">
+                                    {new Date(board.created_at).toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button
+                                        className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/40 text-sm transition"
+                                        onClick={() => deleteBoard(board.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </div>
+    </div>
+)
 }
 
 export default Boards

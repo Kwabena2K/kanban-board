@@ -41,7 +41,7 @@ function Signup() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-slate-800">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <h1 className="mb-4 text-4xl text-black font-semibold text-center">Signup</h1>
                 
