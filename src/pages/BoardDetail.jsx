@@ -10,6 +10,8 @@ export default function BoardDetail() {
     const [loading, setLoading] = useState(true)
     const [lists, setLists] = useState([])
     const [newListTitle, setNewListTitle] = useState("")
+    const [cards, setCards] = useState([])
+    const [newCardTitle, setNewCardTitle] = useState({}) // track per list in object versus shared state with a string
 
 
 
@@ -78,6 +80,57 @@ export default function BoardDetail() {
     }
 
 
+    useEffect(() => {
+        if (lists.length === 0) return;
+        fetchCards()
+    }, [lists])
+
+
+    // Fetch cards
+    const fetchCards = async () => {
+        try {
+            setLoading(true)
+            const { data, error } = await supabase.from('cards').select('*').in('list_id', lists.map(list => list.id)).order('position');
+            if (error) throw error
+            setCards(data)
+        } catch (error) {
+            console.log("Error fetching card:", error)
+            setError(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+
+    // Create card
+    const createCard = async (listId) => {
+        try {
+            const listCards = cards.filter(c => c.list_id === listId);
+            const title = newCardTitle[listId];
+            if(!title || title.trim() === '') return
+            const { data, error } = await supabase.from('cards').insert({ title, list_id: listId, position: listCards.length + 1 }).select().single()
+            if (error) throw error
+            setCards([...cards, data])
+            setNewCardTitle({...newCardTitle, [listId]: ''})
+        } catch (error) {
+            setError(error.message)
+        }
+    }
+
+    // Delete card
+
+    const deleteCard = async (cardId) => {
+        if (!confirm('Delete this card?')) return
+        try {
+            const { data, error } = await supabase.from('cards').delete().eq('id', cardId)
+            if (error) throw error
+            setCards(cards.filter(card => card.id !== cardId))
+        } catch (error) {
+            alert(error.message)
+        }
+    }
+
+
 
     // Back button 
     const navigate = useNavigate();
@@ -94,27 +147,28 @@ export default function BoardDetail() {
 
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl font-bold mb-6">{board.title}</h1>
+        <div className="min-h-screen bg-slate-800">
 
-                {/* Add list feature */}
-                <div className="flex gap-2 mb-6">
-                    <input
+
+            <div className="bg-black/20 px-4 py-3 flex items-center gap-4 mb-4">
+                <h1 className="text-xl font-bold text-white">{board.title}</h1>
+                <input
                         value={newListTitle}
                         onChange={e => setNewListTitle(e.target.value)}
                         placeholder="Add a list..."
                         className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <button onClick={createList} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <button onClick={createList} className="px-3 py-1 bg-white text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-50">
                         Add List
                     </button>
-                </div>
+            </div>
+                {/* Add list feature */}
+                
 
                 {/* Lists section */}
                 <div className="flex gap-4 overflow-x-auto pb-4">
                     {lists.map(list => (
-                        <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0">
+                        <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0 max-h-[calc(100vh-200px)] flex flex-col self-start">
                             {/* List header */}
                             <div className="flex justify-between items-center mb-3">
                                 <h2 className="font-semibold text-gray-700">{list.title}</h2>
@@ -125,14 +179,36 @@ export default function BoardDetail() {
                                     ✕
                                 </button>
                             </div>
+
+
+
                             {/* Cards section  */}
-                            <div className="flex flex-col gap-2">
-                                <p className="text-sm text-gray-400">No cards yet</p>
+                            <div className="flex flex-col gap-2 overflow-y-auto">
+                                {cards.filter(card => card.list_id === list.id).map(card => (
+                                    <div key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
+                                        <p className="text-sm text-gray-700">{card.title}</p>
+                                        <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2">✕</button>
+                                    </div>
+                                ))}
                             </div>
+                            <input required
+                                value={newCardTitle[list.id] || ''}
+                                onChange={e =>  setNewCardTitle({...newCardTitle, [list.id]: e.target.value})}
+                                placeholder="Add a card..."
+                                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                
+                            />
+                            <button
+                                onClick={() => createCard(list.id)}
+                                className="w-full mt-2 px-3 py-2 text-sm text-gray-500 hover:bg-gray-300 rounded-lg text-left"
+                            >
+                                + Add a card
+                            </button>
                         </div>
                     ))}
                 </div>
-            </div>
+
+
 
 
             {/* Back button */}
