@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
+
 
 export default function BoardDetail() {
     const { id } = useParams();
     const [error, setError] = useState(null)
     const [board, setBoard] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [lists, setLists] = useState([])
     const [newListTitle, setNewListTitle] = useState("")
     const [cards, setCards] = useState([])
@@ -15,46 +16,39 @@ export default function BoardDetail() {
 
 
 
+
     useEffect(() => {
-        async function fetchBoard() {
+        // combining all fetching in one useEffect to fix glitches from multiple useEffects 
+        async function fetchAll() {
             try {
+                setLoading(true)
                 // fetch board
-                const { data, error } = await supabase.from('boards').select('*').eq('id', id).single();
-                if (error) throw error;
-                setBoard(data)
+                const { data: boardData, error: boardError } = await supabase.from('boards').select('*').eq('id', id).single();
+                if (boardError) throw boardError
+                setBoard(boardData)
+
+                // fetch lists
+                const { data: listsData, error: listsError } = await supabase.from('lists').select('*').eq('board_id', id).order('position');
+                if (listsError) throw listsError
+                setLists(listsData)
+
+                // fetch cards
+                if (listsData.length > 0) {
+                    const { data: cardsData, error: cardsError } = await supabase.from('cards').select('*').in('list_id', listsData.map(list => list.id)).order('position');
+                    if (cardsError) throw cardsError
+                    setCards(cardsData)
+                }
             } catch (error) {
-                console.log('Error fetching data:', error.message)
+                console.log('Error:', error.message)
                 setError(error.message)
             } finally {
                 setLoading(false)
             }
         }
-        if (id) fetchBoard()
-    }, [id])
-
-
-    useEffect(() => {
-        async function fetchLists() {
-
-            try {
-                // fetch list
-                const { data, error } = await supabase.from('lists').select('*').eq('board_id', id).order('position');
-                console.log('lists data:', data);
-                console.log('lists error:', error);
-                if (error) throw error;
-                setLists(data)
-            } catch (error) {
-                setError(error.message)
-            } finally {
-                setLoading(false)
-            }
-        }
-        if (id) fetchLists()
-
+        if (id) fetchAll()
     }, [id])
 
     async function createList() {
-        // create list
         try {
             const { data, error } = await supabase.from('lists').insert({ title: newListTitle, board_id: id, position: lists.length + 1 }).select().single()
             if (error) throw error
@@ -67,37 +61,13 @@ export default function BoardDetail() {
 
     async function deleteList(listId) {
         if (!confirm('Delete this list?')) return
-        // delete list
         try {
             const { error } = await supabase.from('lists').delete().eq('id', listId)
             if (error) throw error
-            setLists(lists.filter(list => list.id !== listId)) // Refresh list
-
-        } catch (error) { // error handling
+            setLists(lists.filter(list => list.id !== listId))
+        } catch (error) {
             console.log('Error deleting board:', error)
             alert(error.message)
-        }
-    }
-
-
-    useEffect(() => {
-        if (lists.length === 0) return;
-        fetchCards()
-    }, [lists])
-
-
-    // Fetch cards
-    const fetchCards = async () => {
-        try {
-            setLoading(true)
-            const { data, error } = await supabase.from('cards').select('*').in('list_id', lists.map(list => list.id)).order('position');
-            if (error) throw error
-            setCards(data)
-        } catch (error) {
-            console.log("Error fetching card:", error)
-            setError(error.message)
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -107,11 +77,11 @@ export default function BoardDetail() {
         try {
             const listCards = cards.filter(c => c.list_id === listId);
             const title = newCardTitle[listId];
-            if(!title || title.trim() === '') return
+            if (!title || title.trim() === '') return
             const { data, error } = await supabase.from('cards').insert({ title, list_id: listId, position: listCards.length + 1 }).select().single()
             if (error) throw error
             setCards([...cards, data])
-            setNewCardTitle({...newCardTitle, [listId]: ''})
+            setNewCardTitle({ ...newCardTitle, [listId]: '' })
         } catch (error) {
             setError(error.message)
         }
@@ -132,6 +102,7 @@ export default function BoardDetail() {
 
 
 
+
     // Back button 
     const navigate = useNavigate();
 
@@ -141,9 +112,23 @@ export default function BoardDetail() {
 
 
 
-    if (loading) return <p>Loading...</p>
-    if (error) return <p>Error: {error}</p>
-    if (!board) return <p>Board not found</p>
+    if (loading) return (
+        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
+            <p className="text-slate-400">Loading...</p>
+        </div>
+    )
+
+    if (error) return (
+        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
+            <p className="text-slate-400">Error: {error}</p>
+        </div>
+    )
+
+    if (!board) return (
+        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
+            <p className="text-slate-400">Board not found</p>
+        </div>
+    )
 
 
     return (
@@ -153,60 +138,60 @@ export default function BoardDetail() {
             <div className="bg-black/20 px-4 py-3 flex items-center gap-4 mb-4">
                 <h1 className="text-xl font-bold text-white">{board.title}</h1>
                 <input
-                        value={newListTitle}
-                        onChange={e => setNewListTitle(e.target.value)}
-                        placeholder="Add a list..."
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <button onClick={createList} className="px-3 py-1 bg-white text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-50">
-                        Add List
-                    </button>
+                    value={newListTitle}
+                    onChange={e => setNewListTitle(e.target.value)}
+                    placeholder="Add a list..."
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button onClick={createList} className="px-3 py-1 bg-white text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-50">
+                    Add List
+                </button>
             </div>
-                {/* Add list feature */}
-                
-
-                {/* Lists section */}
-                <div className="flex gap-4 overflow-x-auto pb-4">
-                    {lists.map(list => (
-                        <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0 max-h-[calc(100vh-200px)] flex flex-col self-start">
-                            {/* List header */}
-                            <div className="flex justify-between items-center mb-3">
-                                <h2 className="font-semibold text-gray-700">{list.title}</h2>
-                                <button
-                                    onClick={() => deleteList(list.id)}
-                                    className="text-gray-400 hover:text-red-500 text-sm"
-                                >
-                                    ✕
-                                </button>
-                            </div>
 
 
-
-                            {/* Cards section  */}
-                            <div className="flex flex-col gap-2 overflow-y-auto">
-                                {cards.filter(card => card.list_id === list.id).map(card => (
-                                    <div key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
-                                        <p className="text-sm text-gray-700">{card.title}</p>
-                                        <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2">✕</button>
-                                    </div>
-                                ))}
-                            </div>
-                            <input required
-                                value={newCardTitle[list.id] || ''}
-                                onChange={e =>  setNewCardTitle({...newCardTitle, [list.id]: e.target.value})}
-                                placeholder="Add a card..."
-                                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                
-                            />
+            {/* Lists section */}
+            <div className="flex gap-4 flex-wrap lg:flex-nowrap overflow-x-auto pb-4">
+                {lists.map(list => (
+                    <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0 flex flex-col self-start min-h-[200px]">
+                        {/* List header */}
+                        <div className="flex justify-between items-center mb-3">
+                            <h2 className="font-semibold text-gray-700">{list.title}</h2>
                             <button
-                                onClick={() => createCard(list.id)}
-                                className="w-full mt-2 px-3 py-2 text-sm text-gray-500 hover:bg-gray-300 rounded-lg text-left"
+                                onClick={() => deleteList(list.id)}
+                                className="text-gray-400 hover:text-red-500 text-sm"
                             >
-                                + Add a card
+                                ✕
                             </button>
                         </div>
-                    ))}
-                </div>
+
+
+                        {/* Cards section  */}
+                        <div className="flex flex-col gap-2 overflow-y-auto">
+
+                            {cards.filter(card => card.list_id === list.id).map(card => (
+                                <div
+                                    key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
+                                    <p className="text-sm text-gray-700">{card.title}</p>
+                                    <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2">✕</button>
+                                </div>
+                            ))}
+                        </div>
+                        <input required
+                            value={newCardTitle[list.id] || ''}
+                            onChange={e => setNewCardTitle({ ...newCardTitle, [list.id]: e.target.value })}
+                            placeholder="Add a card..."
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+
+                        />
+                        <button
+                            onClick={() => createCard(list.id)}
+                            className="w-full mt-2 px-3 py-2 text-sm text-gray-500 hover:bg-gray-300 rounded-lg text-left"
+                        >
+                            + Add a card
+                        </button>
+                    </div>
+                ))}
+            </div>
 
 
 
