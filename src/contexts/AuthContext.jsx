@@ -36,7 +36,7 @@ function AuthProvider({children}) {
 
     // Functions
     const signUp = async (email, password) => {
-        const {data, error} = await supabase.auth.signUp({ email, password})
+        const {data, error} = await supabase.auth.signUp({ email, password, options:{emailRedirectTo: "https://kanbanstack.netlify.app"}})
         if (error) throw error
         return data
     }
