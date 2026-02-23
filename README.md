@@ -8,7 +8,7 @@ This project focuses on building production-style patterns using React, client-s
 
 ## Overview
 
-The Kanban Board app allows users to manage tasks across multiple workflow stages using an intuitive drag-and-drop interface. Authenticated users can create and organize tasks while maintaining persistent data storage.
+The Kanban Board app allows users to manage tasks across multiple workflow stages. Authenticated users can create and organize tasks while maintaining persistent data storage.
 
 This project was built as part of strengthening full-stack engineering skills and preparing for production-level frontend roles.
 
