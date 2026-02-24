@@ -9,7 +9,6 @@ function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
-    const [showForgotPassword, setShowForgotPassword] = useState(false)
 
 
     const {signIn} = useAuth()

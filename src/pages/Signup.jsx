@@ -42,36 +42,6 @@ function Signup() {
         }
     }
 
-    const handleResetPassword = async () => {
-        if (!resetEmail || resetEmail.trim() === '') return
-        try {
-            setLoading(true)
-            await resetPassword(resetEmail)
-            setSuccess('Check your email for a new reset link!')
-        } catch (error) {
-            setError(error.message)
-        } finally {
-            setLoading(false)
-        }
-
-    }
-
-
-    // TODO 2: Write handleResetPassword that:
-    //   - guards against empty resetEmail
-    //   - calls supabase.auth.resetPasswordForEmail with:
-    //     - the resetEmail value
-    //     - redirectTo pointing to your netlify URL + /update-password
-    //   - handles the error if it fails
-    //   - shows a success message to the user so they know to check their email
-
-    // TODO 3: Add success state to show a confirmation message
-    //   after the email is sent instead of keeping the form visible
-
-    // TODO 4: Make sure /update-password is in your Supabase
-    //   dashboard redirect URLs
-
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-800">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
