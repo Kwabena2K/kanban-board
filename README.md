@@ -62,12 +62,6 @@ This project was built as part of strengthening full-stack engineering skills an
 
 ---
 
-## Technical Challenges Solved
-
-**Protected routing**
-- Built a reusable route wrapper to enforce authentication.
-
----
 
 ## Accomplishments
 
