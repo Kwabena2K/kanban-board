@@ -52,8 +52,15 @@ function AuthProvider({children}) {
         if (error) throw error
     }
 
+    const resetPassword = async (email) => {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://kanbanstack.netlify.app/update-password',
+        })
+        if (error) throw error
+    }
+
     return (
-            <AuthContext.Provider value={{user, loading, signIn, signUp, signOut}}>{children}</AuthContext.Provider>
+            <AuthContext.Provider value={{user, loading, signIn, signUp, signOut, resetPassword}}>{children}</AuthContext.Provider>
     )
 }
 

@@ -4,6 +4,7 @@ import Signup from './pages/Signup'
 import Boards from './pages/Boards'
 import ProtectedRoute from './components/ProtectedRoute'
 import BoardDetail from './pages/BoardDetail'
+import ForgotPassword from './pages/ForgotPassword'
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
           </ProtectedRoute>
         } />
           <Route path="/" element={<Navigate to="/boards" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* <Route path="/update-password" element={<UpdatePassword />} /> */}
       </Routes>
     </BrowserRouter>
   )

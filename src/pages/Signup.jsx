@@ -10,9 +10,12 @@ function Signup() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
+    const [showForgotPassword, setShowForgotPassword] = useState(false)
+    const [resetEmail, setResetEmail] = useState('')
+    const [success, setSuccess] = useState('')
 
 
-    const {signUp} = useAuth()
+    const {signUp, resetPassword} = useAuth()
     const navigate = useNavigate();
 
 
@@ -39,6 +42,35 @@ function Signup() {
         }
     }
 
+    const handleResetPassword = async () => {
+        if (!resetEmail || resetEmail.trim() === '') return
+        try {
+            setLoading(true)
+            await resetPassword(resetEmail)
+            setSuccess('Check your email for a new reset link!')
+        } catch (error) {
+            setError(error.message)
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+
+    // TODO 2: Write handleResetPassword that:
+    //   - guards against empty resetEmail
+    //   - calls supabase.auth.resetPasswordForEmail with:
+    //     - the resetEmail value
+    //     - redirectTo pointing to your netlify URL + /update-password
+    //   - handles the error if it fails
+    //   - shows a success message to the user so they know to check their email
+
+    // TODO 3: Add success state to show a confirmation message
+    //   after the email is sent instead of keeping the form visible
+
+    // TODO 4: Make sure /update-password is in your Supabase
+    //   dashboard redirect URLs
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-800">
@@ -53,12 +85,14 @@ function Signup() {
                 }
                     <input
                         type="email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => {
                             setEmail(e.target.value)
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                     <input
+                        placeholder="Password"
                         type="password"
                         value={password}
                         onChange={(e) => {
