@@ -10,9 +10,12 @@ function Signup() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
+    const [showForgotPassword, setShowForgotPassword] = useState(false)
+    const [resetEmail, setResetEmail] = useState('')
+    const [success, setSuccess] = useState('')
 
 
-    const {signUp} = useAuth()
+    const {signUp, resetPassword} = useAuth()
     const navigate = useNavigate();
 
 
@@ -39,7 +42,6 @@ function Signup() {
         }
     }
 
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-800">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -53,12 +55,14 @@ function Signup() {
                 }
                     <input
                         type="email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => {
                             setEmail(e.target.value)
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                     <input
+                        placeholder="Password"
                         type="password"
                         value={password}
                         onChange={(e) => {

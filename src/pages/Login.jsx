@@ -51,6 +51,7 @@ function Login() {
                     </p>
                 }
                     <input
+                        placeholder="Email"
                         type="email"
                         value={email}
                         onChange={(e) => {
@@ -58,6 +59,7 @@ function Login() {
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                     <input
+                        placeholder="Password"
                         type="password"
                         value={password}
                         onChange={(e) => {
@@ -65,6 +67,16 @@ function Login() {
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                     <button type="button" disabled={loading} className="px-12 py-4 mb-2 bg-green-800 text-white font-semibold rounded-lg border-2 border-white/30 hover:bg-green-900 transition-all duration-200" onClick={handleSubmit}>{loading ? 'Logging in...' : 'Login'}</button>
+                    <p className="text-sm text-center text-green-800 mt-1">
+                        <Link to="/forgot-password">
+                            <span
+                                    className="underline cursor-pointer hover:text-green-600"
+                                >
+                                Forgot password?
+                            </span>
+                        </Link>
+                            
+                        </p>
                     <p className="text-center text-sm text-gray-600 mt-2">
                         Don't have an account?{' '}
                         <Link to="/signup" className="text-blue-600 hover:underline">
