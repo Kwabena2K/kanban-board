@@ -1,4 +1,4 @@
-# Kanban Board Application
+# Kanban Board App
 
 A full-stack Kanban-style task management application built to demonstrate modern frontend development practices, authentication workflows, and scalable component architecture.
 
