@@ -11,7 +11,10 @@ function ForgotPassword () {
 
 
         const handleResetPassword = async () => {
-        if (!email || email.trim() === '') return
+        if (!email || email.trim() === '') {
+            setError('Please enter a valid email')
+            return
+        }
         try {
             setLoading(true)
             await resetPassword(email)
