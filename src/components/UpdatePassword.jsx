@@ -20,7 +20,8 @@ function UpdatePassword() {
             setError('Please enter a password')
             return
         }
-        // || newPassword !== confirmPassword || newPassword.length < 8
+        
+
         if (newPassword !== confirmPassword) {
             setError ('These passwords do not match')
             return
@@ -34,7 +35,6 @@ function UpdatePassword() {
             setLoading(true)
             await updateUser(newPassword)
             setSuccess('Password updated successfully')
-            navigate('/login') // redirect back to login page
         } catch (error) {
             setError(error.message)
         } finally {
