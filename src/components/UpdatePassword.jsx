@@ -1,6 +1,7 @@
-import { useState, useNavigate } from "react"
+import { useState} from "react"
 import { useAuth } from "../contexts/AuthContext"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 
 function UpdatePassword() {
@@ -11,7 +12,8 @@ function UpdatePassword() {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState('')
     const [error, setError] = useState('')
-    const { updateUser } = useAuth;
+    const { updateUser } = useAuth()
+    const navigate = useNavigate()
 
     const handleUpdatePassword = async () => {
         if (!newPassword || newPassword.trim() === '' || newPassword !== confirmPassword) return
@@ -20,7 +22,7 @@ function UpdatePassword() {
             setLoading(true)
             await updateUser(newPassword)
             setSuccess('Password updated successfully')
-            useNavigate('/login') // redirect back to login page
+            navigate('/login') // redirect back to login page
         } catch (error) {
             setError(error.message)
         } finally {
@@ -44,7 +46,7 @@ function UpdatePassword() {
                         </p>
                     }
                     <input
-                        type="email"
+                        type="password"
                         placeholder="New password"
                         value={newPassword}
                         onChange={(e) => {
@@ -52,7 +54,7 @@ function UpdatePassword() {
                             setError("")
                         }} className="w-full px-4 py-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                     <input
-                        type="email"
+                        type="password"
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={(e) => {
