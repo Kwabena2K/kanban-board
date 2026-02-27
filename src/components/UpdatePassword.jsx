@@ -16,7 +16,19 @@ function UpdatePassword() {
     const navigate = useNavigate()
 
     const handleUpdatePassword = async () => {
-        if (!newPassword || newPassword.trim() === '' || newPassword !== confirmPassword) return
+        if (!newPassword || newPassword.trim() === '') {
+            setError('Please enter a password')
+            return
+        }
+        // || newPassword !== confirmPassword || newPassword.length < 8
+        if (newPassword !== confirmPassword) {
+            setError ('These passwords do not match')
+            return
+        }
+        if (newPassword.length < 8 ) {
+            setError ('The password must be at least 8 characters')
+            return
+        }
 
         try {
             setLoading(true)
