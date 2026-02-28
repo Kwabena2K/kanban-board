@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
     } else if(!user){
         // navigate() for event handlers (onClick, onSubmit)
         // <Navigate> for conditional rendering during render
-        return <Navigate to="/login"></Navigate>
+        return <Navigate to="/"></Navigate>
     } else {
         return children
     }
