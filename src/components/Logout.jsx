@@ -21,7 +21,7 @@ function Logout() {
         try {
             await signOut()
             console.log("signed out")
-            navigate("/login") // navigate to the login page if successful
+            navigate("/") // navigate to the home page if successful
         } catch (error) {
             console.log("Logout error:", error)
             setError(error.message)

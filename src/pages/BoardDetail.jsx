@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,9 @@ export default function BoardDetail() {
     const [board, setBoard] = useState(null)
     const [loading, setLoading] = useState(false)
     const [lists, setLists] = useState([])
-    const [newListTitle, setNewListTitle] = useState("")
+    const [listTitle, setListTitle] = useState("")
+    const [editingListId, setEditingListId] = useState(null)
+    const [editListTitle, setEditListTitle] = useState("")
     const [cards, setCards] = useState([])
     const [newCardTitle, setNewCardTitle] = useState({}) // track per list in object versus shared state with a string
 
@@ -49,11 +51,15 @@ export default function BoardDetail() {
     }, [id])
 
     async function createList() {
+        if (!listTitle || listTitle.trim() === ''){
+            alert("Please enter a list title")
+            return
+        }
         try {
-            const { data, error } = await supabase.from('lists').insert({ title: newListTitle, board_id: id, position: lists.length + 1 }).select().single()
+            const { data, error } = await supabase.from('lists').insert({ title: listTitle, board_id: id, position: lists.length + 1 }).select().single()
             if (error) throw error
             setLists([...lists, data])
-            setNewListTitle('')
+            setListTitle('')
         } catch (error) {
             setError(error.message)
         }
@@ -101,6 +107,23 @@ export default function BoardDetail() {
     }
 
 
+    // Update card
+
+    const updateList = async (title, listId) => {
+        try {
+            if (!title || title.trim() === '') return
+            const { data, error } = await supabase.from('lists').update({ title }).eq('id', listId)
+            if (error) throw error
+            setLists(lists.map(list => list.id === listId ? { ...list, title } : list))
+            setEditListTitle("")
+            setEditingListId(null)
+        } catch (error) {
+            setError(error.message)
+        }
+
+    }
+
+
 
 
     // Back button 
@@ -133,13 +156,12 @@ export default function BoardDetail() {
 
     return (
         <div className="min-h-screen bg-slate-800">
-
-
             <div className="bg-black/20 px-4 py-3 flex items-center gap-4 mb-4">
                 <h1 className="text-xl font-bold text-white">{board.title}</h1>
                 <input
-                    value={newListTitle}
-                    onChange={e => setNewListTitle(e.target.value)}
+                    required
+                    value={listTitle}
+                    onChange={e => setListTitle(e.target.value)}
                     placeholder="Add a list..."
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -147,15 +169,32 @@ export default function BoardDetail() {
                     Add List
                 </button>
             </div>
-
-
             {/* Lists section */}
             <div className="flex gap-4 flex-wrap lg:flex-nowrap overflow-x-auto pb-4">
                 {lists.map(list => (
                     <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0 flex flex-col self-start min-h-[200px]">
                         {/* List header */}
                         <div className="flex justify-between items-center mb-3">
-                            <h2 className="font-semibold text-gray-700">{list.title}</h2>
+                            {editingListId === list.id ? (
+                                <input
+                                    autoFocus
+                                    value={editListTitle}
+                                    onChange={e => setEditListTitle(e.target.value)}
+                                    onBlur={() => updateList(editListTitle, list.id)}
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter') updateList(editListTitle, list.id)
+                                        if (e.key === 'Escape') setEditingListId(null)
+                                    }}
+                                    className="font-semibold text-gray-700 bg-transparent border-b border-gray-400 focus:outline-none"
+                                />
+                            ) : (
+                                <h2
+                                    className="font-semibold text-gray-700 hover:cursor-pointer"
+                                    onClick={() => { setEditingListId(list.id); setEditListTitle(list.title) }}
+                                >
+                                    {list.title}
+                                </h2>
+                            )}
                             <button
                                 onClick={() => deleteList(list.id)}
                                 className="text-gray-400 hover:text-red-500 text-sm"
@@ -163,14 +202,11 @@ export default function BoardDetail() {
                                 ✕
                             </button>
                         </div>
+                        {/* Cards section */}
 
-
-                        {/* Cards section  */}
                         <div className="flex flex-col gap-2 overflow-y-auto">
-
                             {cards.filter(card => card.list_id === list.id).map(card => (
-                                <div
-                                    key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
+                                <div key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
                                     <p className="text-sm text-gray-700">{card.title}</p>
                                     <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2">✕</button>
                                 </div>
@@ -179,9 +215,14 @@ export default function BoardDetail() {
                         <input required
                             value={newCardTitle[list.id] || ''}
                             onChange={e => setNewCardTitle({ ...newCardTitle, [list.id]: e.target.value })}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    createCard(list.id)
+                                }
+                            }}
                             placeholder="Add a card..."
                             className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-
                         />
                         <button
                             onClick={() => createCard(list.id)}
@@ -192,10 +233,6 @@ export default function BoardDetail() {
                     </div>
                 ))}
             </div>
-
-
-
-
             {/* Back button */}
             <button onClick={handleGoBack} className="fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                 Back
