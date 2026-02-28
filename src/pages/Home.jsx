@@ -16,7 +16,6 @@ function Home() {
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                             Capture.<br />
                             Organize.<br />
-                            {/* Complete.<br /> */}
                             <span className="text-header">Complete.</span>
                         </h1>
                         <p className="text-lg text-white max-w-md leading-relaxed mx-auto md:mx-0">
