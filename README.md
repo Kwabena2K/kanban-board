@@ -17,7 +17,7 @@ This project was built as part of strengthening full-stack engineering skills an
 
 ## Demo login
 
-user: demo@gmail.com
+user: demo@gmail.com <br>
 password: password
 
 ---
