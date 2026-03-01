@@ -15,12 +15,14 @@ export default function BoardDetail() {
     const [editListTitle, setEditListTitle] = useState("")
     const [cards, setCards] = useState([])
     const [newCardTitle, setNewCardTitle] = useState({}) // track per list in object versus shared state with a string
+    const [description, setDescription] = useState("") // adding state for description
+    const [cardModal, setCardModal] = useState(null) // adding state for card modal description
 
 
 
 
     useEffect(() => {
-        // combining all fetching in one useEffect to fix glitches from multiple useEffects 
+        // combining all fetching in one useEffect to fix glitches from multiple singular useEffects 
         async function fetchAll() {
             try {
                 setLoading(true)
@@ -123,6 +125,12 @@ export default function BoardDetail() {
 
     }
 
+    // const updateCardDescription = async (cardId, description) =>{
+        
+    // }
+
+    // starter logic for creating card modal to edit description
+
 
 
 
@@ -136,43 +144,47 @@ export default function BoardDetail() {
 
 
     if (loading) return (
-        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
-            <p className="text-slate-400">Loading...</p>
+        <div className="min-h-screen bg-boards flex items-center justify-center">
+            <p className="text-slate-400 text-center">Loading...</p>
         </div>
     )
 
     if (error) return (
-        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
-            <p className="text-slate-400">Error: {error}</p>
+        <div className="min-h-screen bg-boards flex items-center justify-center">
+            <p className="text-slate-400 text-center">Error: {error}</p>
         </div>
     )
 
     if (!board) return (
-        <div className="min-h-screen bg-slate-800 flex items-center justify-center">
-            <p className="text-slate-400">Board not found</p>
+        <div className="min-h-screen bg-boards flex items-center justify-center">
+            <p className="text-slate-400 text-center ">Board not found</p>
         </div>
     )
 
 
     return (
-        <div className="min-h-screen bg-slate-800">
-            <div className="bg-black/20 px-4 py-3 flex items-center gap-4 mb-4">
+        <div className="min-h-screen bg-btn/90">
+            {/* Navbar */}
+            <div className="bg-black/70 px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4 rounded-sm">
                 <h1 className="text-xl font-bold text-white">{board.title}</h1>
-                <input
-                    required
-                    value={listTitle}
-                    onChange={e => setListTitle(e.target.value)}
-                    placeholder="Add a list..."
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button onClick={createList} className="px-3 py-1 bg-white text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-50">
-                    Add List
-                </button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                    <input
+                        required
+                        value={listTitle}
+                        onChange={e => setListTitle(e.target.value)}
+                        placeholder="Add a list..."
+                        className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    />
+                    <button onClick={createList} className="px-3 py-2 bg-white text-blue-600 text-sm font-semibold rounded-lg hover:bg-blue-50 whitespace-nowrap">
+                        Add List
+                    </button>
+                </div>
             </div>
-            {/* Lists section */}
-            <div className="flex gap-4 flex-wrap lg:flex-nowrap overflow-x-auto pb-4">
+
+            {/* Lists section  */}
+            <div className="flex gap-4 overflow-x-auto pb-4 px-4">
                 {lists.map(list => (
-                    <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 shrink-0 flex flex-col self-start min-h-[200px]">
+                    <div key={list.id} className="bg-gray-200 rounded-lg p-3 w-72 min-w-[280px] shrink-0 flex flex-col self-start min-h-[200px]">
                         {/* List header */}
                         <div className="flex justify-between items-center mb-3">
                             {editingListId === list.id ? (
@@ -185,7 +197,7 @@ export default function BoardDetail() {
                                         if (e.key === 'Enter') updateList(editListTitle, list.id)
                                         if (e.key === 'Escape') setEditingListId(null)
                                     }}
-                                    className="font-semibold text-gray-700 bg-transparent border-b border-gray-400 focus:outline-none"
+                                    className="font-semibold text-gray-700 bg-transparent border-b border-gray-400 focus:outline-none w-full"
                                 />
                             ) : (
                                 <h2
@@ -197,21 +209,22 @@ export default function BoardDetail() {
                             )}
                             <button
                                 onClick={() => deleteList(list.id)}
-                                className="text-gray-400 hover:text-red-500 text-sm"
+                                className="text-gray-400 hover:text-red-500 text-sm ml-2 shrink-0"
                             >
                                 ✕
                             </button>
                         </div>
-                        {/* Cards section */}
 
-                        <div className="flex flex-col gap-2 overflow-y-auto">
+                        {/* Cards section */}
+                        <div className="flex flex-col gap-2 overflow-y-auto max-h-[50vh]">
                             {cards.filter(card => card.list_id === list.id).map(card => (
                                 <div key={card.id} className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center w-full">
-                                    <p className="text-sm text-gray-700">{card.title}</p>
-                                    <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2">✕</button>
+                                    <p className="text-sm text-gray-700 break-words flex-1">{card.title}</p>
+                                    <button onClick={() => deleteCard(card.id)} className="text-gray-300 hover:text-red-500 text-xs ml-2 shrink-0">✕</button>
                                 </div>
                             ))}
                         </div>
+
                         <input required
                             value={newCardTitle[list.id] || ''}
                             onChange={e => setNewCardTitle({ ...newCardTitle, [list.id]: e.target.value })}
@@ -233,8 +246,9 @@ export default function BoardDetail() {
                     </div>
                 ))}
             </div>
+
             {/* Back button */}
-            <button onClick={handleGoBack} className="fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+            <button onClick={handleGoBack} className="fixed bottom-4 left-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
                 Back
             </button>
         </div>

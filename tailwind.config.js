@@ -7,9 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        btn: '#1ae5e5',
+        btn: '#0d0d0d',
         btnHover: '#17cece',
         header: '#a7a7a8',
+        boards: '#4f4f4f'
       }
     },
   },
