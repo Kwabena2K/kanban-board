@@ -29,7 +29,7 @@ function ForgotPassword () {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-700">
-            <div className="bg-white p-8 rounded-lg w-full max-w-md">
+            <div className="bg-white p-8 rounded-xl w-full max-w-md">
                 <h1 className="mb-4 text-2xl text-black font-semibold text-center">RESET YOUR PASSWORD</h1>
                 <p className="mb-4 text-center">Enter the email address you used to register</p>
                 
